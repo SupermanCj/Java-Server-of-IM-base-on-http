@@ -33,7 +33,9 @@ public class GroupMessageServiceImpl implements GroupMessageService {
 		List<String> aliases = new ArrayList<>();
 		Iterator<Integer> iterator = groupUserIdList.iterator();
 		while(iterator.hasNext()) {
-			aliases.add(String.valueOf(iterator.next()));
+			Integer temp = iterator.next();
+			if(temp==groupMessage.getSenderId())continue;
+			aliases.add(String.valueOf(temp));
 		}
 		JPush.sendMessageToAlias(JPush.GROUP_MESSAGE, aliases, "群组消息", groupMessage.getGroupId());
 	}

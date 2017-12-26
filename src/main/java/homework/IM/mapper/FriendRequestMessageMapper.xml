@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="homework.IM.mapper.FriendRequestMessageMapper">
+	<resultMap type="homework.IM.model.db.FriendRequestMessage" id="friendRequestMessage">
+		<id property="id" column="id" />
+		<result property="recipientId" column="recipient_id" />
+		<result property="senderId" column="sender_id" />
+		<result property="isRead" column="is_read" />
+		<result property="reply" column="reply" />
+		<result property="requestTime" column="request_time" />
+	</resultMap>
+	<resultMap type="homework.IM.model.returnModel.FriendRequestMessageAdapter" id="friendRequestMessageAdapter">
+		<result property="id" column="id" />
+		<result property="recipientId" column="recipient_id" />
+		<result property="senderId" column="sender_id" />
+		<result property="requestTime" column="request_time" />
+		<result property="nickname" column="nickname"/>
+		<result property="avatar" column="avatar"/>
+	</resultMap>
+	<!-- addFriendRequestMessage(friendRequestMessage) -->
+	<insert id="addFriendRequestMessage" parameterType="FriendRequestMessage"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		friend_request_message(recipient_id, sender_id, is_read, reply,
+		request_time)
+		values(#{recipientId}, #{senderId}, #{isRead}, #{reply},
+		#{requestTime})
+	</insert>
+
+	<update id="replyFriendRequestMessage">
+		update friend_request_message
+		set reply=#{reply}
+		where
+		id = #{requestId}
+	</update>
+
+	<!-- getFriendRequestMessageBySenderId(senderId) -->
+	<select id="getFriendRequestMessageBySenderId" parameterType="int"
+		resultMap="friendRequestMessage">
+		select *
+		from friend_request_message
+		where sender_id=#{senderId}
+	</select>
+
+	<!-- getFriendRequestMessageByRecipientId(recipientId) -->
+	<select id="getFriendRequestMessageByRecipientId" parameterType="int" resultMap="friendRequestMessageAdapter">
+		select id, recipient_id, sender_id, request_time, nickname, avatar
+		from friend_request_message left join user on friend_request_message.sender_id = user.user_id
+		where recipient_id = #{recipientId} and is_read = false
+	</select>
+	<!-- updateIsRead(recipientId) -->
+	<update id="updateIsRead">
+		update friend_request_message
+		set is_read = true
+		where
+		recipient_id=#{recipientId} and is_read = false
+	</update>
+</mapper>

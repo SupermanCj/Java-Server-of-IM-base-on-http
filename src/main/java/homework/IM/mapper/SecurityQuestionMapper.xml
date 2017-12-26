@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="homework.IM.mapper.SecurityQuestionMapper">
+	<resultMap type="homework.IM.model.db.SecurityQuestion" id="questionMap">
+		<id property="questionId" column="question_id" />
+		<result property="questionContent" column="question_content" />
+	</resultMap>
+
+	<!-- getQuestionList() -->
+	<select id="getQuestionList" resultMap="questionMap">
+		select *
+		from
+		security_question
+	</select>
+	<!-- getQuestionById(securityQuestionId) -->
+	<select id="getQuestionById" resultMap="questionMap">
+		select *
+		from security_question
+		where question_id =#{securityQuestionId}
+	</select>
+</mapper>

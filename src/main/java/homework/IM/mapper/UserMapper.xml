@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="homework.IM.mapper.UserMapper">
+	<resultMap type="homework.IM.model.db.User" id="UserMap">
+		<id property="userId" column="user_id" />
+		<result property="nickname" column="nickname" />
+		<result property="avatar" column="avatar" />
+		<result property="securityQuestionId" column="security_question_id" />
+		<result property="securityQuestionAnswer" column="security_question_answer" />
+		<result property="registrationTime" column="registration_time" />
+	</resultMap>
+	<!-- getUser(int userId) -->
+	<select id="getUser" parameterType="int" resultMap="UserMap">
+		select *
+		from
+		user
+		where user_id=#{userId}
+	</select>
+	<!-- addUser(User user) -->
+	<insert id="addUser" parameterType="User" useGeneratedKeys="true"
+		keyProperty="userId">
+		insert into
+		user(nickname,password,avatar,security_question_id,security_question_answer)
+		values(#{nickname},#{password},#{avatar},#{securityQuestionId},#{securityQuestionAnswer})
+	</insert>
+	<!-- getPassword(int userId) -->
+	<select id="getPassword" parameterType="int" resultType="String">
+		select
+		password
+		from user
+		where user_id=#{userId}
+	</select>
+	<!-- updatePassword(int userId,String newPassword) -->
+	<select id="updatePassword">
+		update user
+		set password=#{newPassword}
+		where
+		user_id=#{userId}
+	</select>
+	<!-- updateNickname(int userId, string nickname) -->
+	<update id="updateNickname">
+		update user
+		set nickname=#{nickname}
+		where
+		user_id=#{userId}
+	</update>
+	<!-- updateAvatar(int userId,String avatar) -->
+	<update id="updateAvatar">
+		update user
+		set avatar=#{avatar}
+		where
+		user_id=#{userId}
+	</update>
+</mapper>

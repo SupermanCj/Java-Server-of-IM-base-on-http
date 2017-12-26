@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="homework.IM.mapper.GroupMapper">
+	<resultMap type="homework.IM.model.db.Group" id="groupMapper">
+		<id property="groupId" column="group_id"/>
+		<result property="managerId" column="manager_id"/>
+		<result property="groupName" column="group_name"/>
+		<result property="creationTime" column="creation_time"/>
+	</resultMap>
+	<!-- createGroup(group) -->
+	<insert id="createGroup" parameterType="Group" useGeneratedKeys="true" keyProperty="groupId">
+		insert into g_roup(manager_id, group_name, creation_time)
+		values(#{managerId}, #{groupName}, #{creationTime})
+	</insert>
+	<!-- modifyGroupName(groupId,groupName) -->
+	<update id="modifyGroupName">
+		update g_roup set group_name = #{groupName} 
+		where group_id = #{groupId}
+	</update>
+	<!-- deleteGroup -->
+	<delete id="deleteGroup">
+		delete from g_roup
+		where group_id = #{groupId}
+	</delete>
+	<!-- getManagerId -->
+	<select id="getManagerId" resultType="int">
+		select manager_id
+		from g_roup
+		where group_id = #{groupId}
+	</select>
+	
+	<!-- getMyGroupList -->
+	<select id="getMyGroupList" parameterType="int" resultMap="groupMapper">
+		select * 
+		from g_roup
+		where manager_id = #{userId}
+	</select>
+	<!-- getOtherGroupList(userId, groupIdList) -->
+	<select id="getOtherGroupList"  resultMap="groupMapper">
+		select *
+		from g_roup
+		where manager_id != #{userId} and group_id in
+		<foreach collection="groupIdList" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<!-- getGroupById(groupId) -->
+	<select id="getGroupById" resultMap="groupMapper">
+		select *
+		from g_roup
+		where group_id = #{groupId}
+	</select>
+</mapper>

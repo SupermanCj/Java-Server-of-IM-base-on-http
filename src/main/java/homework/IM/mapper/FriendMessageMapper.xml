@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="homework.IM.mapper.FriendMessageMapper">
+	<resultMap type="homework.IM.model.db.FriendMessage" id="FriendMessage">
+		<id property="messageId" column="message_id" />
+		<result property="recipientId" column="recipient_id" />
+		<result property="senderId" column="sender_id" />
+		<result property="messageTime" column="message_time" />
+		<result property="message" column="message" />
+		<result property="isRead" column="is_read" />
+		<result property="relationId" column="relation_id"/>
+	</resultMap>
+	<!-- sendMessage(friendMessage) -->
+	<insert id="sendMessage" parameterType="FriendMessage" useGeneratedKeys="true" keyProperty="messageId">
+		insert into friend_message(recipient_id,sender_id,message_time,message,is_read,relation_id)
+		values(#{recipientId}, #{senderId}, #{messageTime}, #{message}, #{isRead},#{relationId})
+	</insert>
+	
+	<!-- getFriendHistoryMessage(userId) -->
+	<select id="getFriendHistoryMessage" resultMap="FriendMessage">
+		select * 
+		from friend_message
+		where recipient_id =#{userId} and is_read = false
+	</select>
+	
+	<!-- updateIsRead(userId) -->
+	<update id="updateIsRead">
+		update friend_message
+		set is_read = true
+		where recipient_id=#{userId} and is_read = false
+	</update>
+	<select id="getLastMessage" resultMap = "FriendMessage">
+		select *
+		from friend_message
+		where message_id in(
+		select max(message_id)
+		from friend_message
+		where recipient_id = #{userId} or sender_id = #{userId}
+		group by relation_id
+		)
+		
+	</select>
+	<!-- getNoReadNum -->
+	<select id="getNoReadNum" resultType="int">
+		select count(*)
+		from friend_message
+		where relation_id = #{relationId} and is_read = false and sender_id != #{userId}
+	</select>
+	<!-- getFriendMessageByFriendId -->
+	<select id="getFriendMessageByFriendId" resultMap="FriendMessage">
+		select *
+		from friend_message
+		where sender_id=#{friendId} and recipient_id = #{userId} and is_read = false ;
+	</select>
+	<update id="updateIsReadByFriendId">
+		update friend_message
+		set is_read = true
+		where sender_id=#{friendId} and recipient_id = #{userId} and is_read = false;
+	</update>
+	
+</mapper>

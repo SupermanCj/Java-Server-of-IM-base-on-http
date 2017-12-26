@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="homework.IM.mapper.FriendMapper">
+	<resultMap type="homework.IM.model.db.Friend" id="friend">
+		<id property="relationId" column="relation_id" />
+		<result property="userId" column="user_id" />
+		<result property="friendId" column="friend_id" />
+		<result property="date" column="date" />
+		<result property="remark" column="remark" />
+	</resultMap>
+	<resultMap type="homework.IM.model.returnModel.FriendAdapter" id="friendAdapter">
+		<result property="relationId" column="relation_id" />
+		<result property="friendId" column="friend_id" />
+		<result property="remark" column="remark" />
+		<result property="nickname" column="nickname"/>
+		<result property="avatar" column="avatar"/>
+	</resultMap>
+	<!-- updateRemark(userId,friendId,remark -->
+	<update id="updateRemark">
+		update friend
+		set remark=#{remark}
+		where
+		relation_id={relationId}
+	</update>
+	<!-- addFriend(friend) -->
+	<insert id="addFriend" parameterType="Friend" useGeneratedKeys="true"
+		keyProperty="userId">
+		insert into
+		friend(user_id,friend_id,date)
+		values(#{userId},#{friendId},#{date})
+	</insert>
+	<!-- getFriendList(userId) -->
+	<select id="getFriendList" parameterType="int" resultMap="friendAdapter">
+		select relation_id,friend_id,remark,nickname,avatar
+		from friend as f left join user on f.friend_id = user.user_id
+		where f.user_id = #{userId}
+	</select>
+	<!-- deleteFriend(userId, friendId) -->
+	<select id="deleteFriend">
+		delete from friend
+		where (user_id=#{userId} and
+		friend_id = #{friendId})
+		or (friend_id=#{userId} and user_id=#{friendId})
+	</select>
+	<!-- getRelationId -->
+	<select id="getRelationId" resultType="Integer">
+		select relation_id
+		from friend
+		where user_id = #{userId} and friend_id = #{friendId}
+	</select>
+	<!-- getAllRelationId -->
+	<select id="getAllRelationId" resultType="int">
+		select sum(relation_id)
+		from friend
+		where (user_id = #{userId} and friend_id = #{friendId})
+			or (friend_id=#{userId} and user_id=#{friendId})
+	</select>
+	
+</mapper>

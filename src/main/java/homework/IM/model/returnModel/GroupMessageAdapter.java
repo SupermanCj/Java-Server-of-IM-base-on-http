@@ -9,6 +9,7 @@ public class GroupMessageAdapter {
 		this.groupId = groupId;
 		this.groupMessages = groupMessage;
 	}
+	//群组消息返回
 	private int groupId;
 	private List<GroupMessage> groupMessages;
 	
